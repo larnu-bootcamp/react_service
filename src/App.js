@@ -1,24 +1,36 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import Header from './components/Header';
+import Profile from './components/Profile';
+import UserContext from './context/UserContext';
+import ProfileService from './services/profile';
 
 function App() {
+
+  const [name, setName] = useState('null');
+  const profileService = new ProfileService();
+  const userData = {
+    name: [name, setName],
+  }
+
+  async function getUser() {
+    const data = await profileService.getProfile();
+    setName(data.user.fullName);
+  }
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserContext.Provider value={userData}>
+      <div className="App">
+        <h1>Aprendiendo UseContext</h1>
+        <Profile/>
+        <Header/>
+      </div>
+    </UserContext.Provider>
   );
 }
 
